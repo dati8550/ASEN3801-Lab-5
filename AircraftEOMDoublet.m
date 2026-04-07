@@ -2,13 +2,13 @@ function xdot = AircraftEOMDoublet(time, aircraft_state, aircraft_surfaces, doub
 
 
 % Constants
-
+ h = 1609;
  g = 9.81;
  m = aircraft_parameters.m;
  Ix = aircraft_parameters.Ix; Iy = aircraft_parameters.Iy; Iz = aircraft_parameters.Iz;
  Ixz = aircraft_parameters.Ixz;
  Gamma = Ix*Iz - Ixz^2;
-
+ [T, a, P, rho] = stdatmo(h);    % Get Density
  de_trim = aircraft_surfaces(1); %trim elevator
 
     % Equation 7
@@ -44,7 +44,7 @@ function xdot = AircraftEOMDoublet(time, aircraft_state, aircraft_surfaces, doub
 
 % Use the given function to find the forces and moments
     
-    [f_aero_body, m_aero_body] = AeroForcesAndMoments(aircraft_state, current_surfaces, wind_inertial, aircraft_parameters);
+    [f_aero_body, m_aero_body] = AeroForcesAndMoments(aircraft_state, current_surfaces, wind_inertial, rho, aircraft_parameters);
     
     X = f_aero_body(1);
     Y = f_aero_body(2);
