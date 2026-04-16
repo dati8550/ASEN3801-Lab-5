@@ -1,37 +1,31 @@
 function xdot = AircraftEOMDoublet(time, aircraft_state, aircraft_surfaces, doublet_size, doublet_time, wind_inertial, aircraft_parameters)
 
-
 % Constants
- h = 1609;
+ h = -aircraft_state(3); % Dynamically calculate altitude from z-position
  g = 9.81;
  m = aircraft_parameters.m;
  Ix = aircraft_parameters.Ix; Iy = aircraft_parameters.Iy; Iz = aircraft_parameters.Iz;
  Ixz = aircraft_parameters.Ixz;
  Gamma = Ix*Iz - Ixz^2;
- [T, a, P, rho] = stdatmo(h);    % Get Density
- de_trim = aircraft_surfaces(1); %trim elevator
+ [T, a, P, rho] = stdatmo(h);    % Get Density dynamically
 
-    % Equation 7
-    if time > 0 && time <= doublet_time
-        
-        d_e_effective = de_trim + doublet_size;
-        
-    elseif time > doublet_time && time <= 2 * doublet_time
-       
-        d_e_effective = de_trim - doublet_size;
-        
-    else
-        
-        d_e_effective = de_trim;
-    end
+ de_trim = aircraft_surfaces(1); % trim elevator
     
 
+% Evaluate what the elevator should be doing at THIS specific instant in time
+if time <= doublet_time
+    d_e_effective = de_trim + doublet_size;
+elseif time <= 2 * doublet_time
+    d_e_effective = de_trim - doublet_size;
+else
+    d_e_effective = de_trim;
+end
 
-    % Update the surface vector for this specific time step
-    current_surfaces = aircraft_surfaces;
-    current_surfaces(1) = d_e_effective;
+% Update the surface vector for this specific time step
+current_surfaces = aircraft_surfaces;
+current_surfaces(1) = d_e_effective;
 
-%get values
+% Get values
     phi = aircraft_state(4);
     theta = aircraft_state(5);
     psi = aircraft_state(6);
@@ -43,7 +37,6 @@ function xdot = AircraftEOMDoublet(time, aircraft_state, aircraft_surfaces, doub
     r = aircraft_state(12);
 
 % Use the given function to find the forces and moments
-    
     [f_aero_body, m_aero_body] = AeroForcesAndMoments(aircraft_state, current_surfaces, wind_inertial, rho, aircraft_parameters);
     
     X = f_aero_body(1);
@@ -53,9 +46,6 @@ function xdot = AircraftEOMDoublet(time, aircraft_state, aircraft_surfaces, doub
     L = m_aero_body(1);
     M = m_aero_body(2);
     N = m_aero_body(3);
-
-    
-   
 
 % Navigation Equations
 cos_the = cos(theta);
@@ -75,7 +65,7 @@ dphi   = p + q*sin_phi*tan(theta) + r*cos_phi*tan(theta);
 dtheta = q*cos_phi - r*sin_phi;
 dpsi   = (q*sin_phi + r*cos_phi)/cos_the;
 
-    % Translational Dynamics
+% Translational Dynamics
 du = r*v - q*w - g*sin_the + X/m;
 dv = p*w - r*u + g*sin_phi*cos_the + Y/m;
 dw = q*u - p*v + g*cos_phi*cos_the + Z/m;
@@ -85,5 +75,5 @@ dp = (Ixz*(Ix-Iy+Iz)*p*q - (Iz*(Iz-Iy)+Ixz^2)*q*r + Iz*L + Ixz*N) / Gamma;
 dq = ((Iz-Ix)*p*r - Ixz*(p^2-r^2) + M) / Iy;
 dr = (((Ix-Iy)*Ix+Ixz^2)*p*q - Ixz*(Ix-Iy+Iz)*q*r + Ixz*L + Ix*N) / Gamma;
 
-    xdot = [dx_e; dy_e; dz_e; dphi; dtheta; dpsi; du; dv; dw; dp; dq; dr];
+xdot = [dx_e; dy_e; dz_e; dphi; dtheta; dpsi; du; dv; dw; dp; dq; dr];
 end
