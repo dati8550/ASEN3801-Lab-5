@@ -116,22 +116,27 @@ function PlotAircraftSim(time, aircraft_state_array, control_input_array, fig, c
             graphcasename = 'Case 23';
             taskname = 'Task 3';
             partname = 'Part 7';
+        elseif fig(1) == 139
+            casename = 'Doublet Maneuver';
+            graphcasename = 'Case 24';
+            taskname = 'Task 3';
+            partname = 'Part 1';
     end
 
 
     % seperating aircraft state vector and control inputs for plotting
-    x = aircraft_state_array(1,:);
-    y = aircraft_state_array(2,:);
-    z = aircraft_state_array(3,:);
-    phi = aircraft_state_array(4,:);
-    theta = aircraft_state_array(5,:);
-    psi = aircraft_state_array(6,:);
-    u = aircraft_state_array(7,:);
-    v = aircraft_state_array(8,:);
-    w = aircraft_state_array(9,:);
-    p = aircraft_state_array(10,:);
-    q = aircraft_state_array(11,:);
-    r = aircraft_state_array(12,:);
+    x = aircraft_state_array(:,1);
+    y = aircraft_state_array(:,2);
+    z = aircraft_state_array(:,3);
+    phi = aircraft_state_array(:,4);
+    theta = aircraft_state_array(:,5);
+    psi = aircraft_state_array(:,6);
+    u = aircraft_state_array(:,7);
+    v = aircraft_state_array(:,8);
+    w = aircraft_state_array(:,9);
+    p = aircraft_state_array(:,10);
+    q = aircraft_state_array(:,11);
+    r = aircraft_state_array(:,12);
 
 
     %{
@@ -143,10 +148,10 @@ function PlotAircraftSim(time, aircraft_state_array, control_input_array, fig, c
 
     % convert control inputs into rudder, aileron, and elevator, and
     % throttle
-    elevator = control_input_array(1,:) * (pi/180);
-    aileron = control_input_array(2,:) * (pi/180);
-    rudder = control_input_array(3,:) * (pi/180);
-    throttle =  control_input_array(4,:);
+    elevator = control_input_array(:,1) * (pi/180);
+    aileron = control_input_array(:,2) * (pi/180);
+    rudder = control_input_array(:,3) * (pi/180);
+    throttle =  control_input_array(:,4);
 
 
 
@@ -278,14 +283,14 @@ function PlotAircraftSim(time, aircraft_state_array, control_input_array, fig, c
     zlabel('Height [real world, flipped from inertial frame] (m)')
     title(['Aircraft 3D Path - ' casename])
 
-%%%%%%SAVES EVERYTHING AS A PDF
-%{
+%%%%%SAVES EVERYTHING AS A PDF
+
 letter = ['A','B','C','D','E','F'];
     for i = 1:6
          exportgraphics(figure(fig(i)), taskname+"_"+partname+"_"+graphcasename+"_"+letter(i)+".png", 'ContentType','image', 'Resolution', 200);
      end
 
     %%%%%%%% ONLY UNCOMMENT TO HAVE 1 MILLION PDF's
-%}
+
 end
 
