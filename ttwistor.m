@@ -25,7 +25,7 @@
 % All dimensional parameters in SI units
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function aircraft_parameters = ttwistor()
+
 aircraft_parameters.g = 9.81;           % Gravitational acceleration [m/s^2]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,6 +138,4 @@ aircraft_parameters.CYr = 0.213412;
   aircraft_parameters.Cldr =   0.000157;
   aircraft_parameters.Cndr =  -0.000856;
 
-
-
-end
+  
